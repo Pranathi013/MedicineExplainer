@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RxClear | Smart Prescription Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-blur top-left"></div>
+    <div class="bg-blur bottom-right"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo" onclick="app.showSection('hero')">
+                <div class="pill-icon">
+                    <div class="pill-left"></div>
+                    <div class="pill-right"></div>
+                </div>
+                <span>RxClear</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-target="hero" onclick="app.showSection('hero')">HOME</a>
+                <a href="#" class="nav-link" data-target="symptom-section" onclick="app.showSection('symptom-section')">SYMPTOM CHECK</a>
+                <a href="#" class="nav-link" data-target="reminders-section" onclick="app.showSection('reminders-section')">REMINDERS</a>
+                <a href="#" class="nav-link" data-target="history-section" onclick="app.showSection('history-section')">HISTORY</a>
+            </div>
+            <div class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="view-section active">
+            <div class="hero-content">
+                <div class="animated-logo-container">
+                    <div class="animated-pill"></div>
+                </div>
+                <h1>RxClear</h1>
+                <p class="tagline">Your prescription. <span class="text-mint">Decoded.</span></p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="app.showSection('input-section'); app.switchTab('type')">
+                        <span class="icon">✍️</span> TYPE PRESCRIPTION
+                    </button>
+                    <button class="btn btn-outline" onclick="app.showSection('input-section'); app.switchTab('upload')">
+                        <span class="icon">📷</span> UPLOAD IMAGE
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Input Section -->
+        <section id="input-section" class="view-section">
+            <div class="header-with-back">
+                <button class="btn-back" onclick="app.showSection('hero')">←</button>
+                <h2>Enter Prescription</h2>
+            </div>
+            <div class="card main-input-card">
+                <div class="tab-switcher">
+                    <button class="tab-btn active" id="tab-type" onclick="app.switchTab('type')">✍️ TYPE</button>
+                    <button class="tab-btn" id="tab-upload" onclick="app.switchTab('upload')">📷 UPLOAD</button>
+                </div>
+
+                <div id="type-tab" class="tab-content active">
+                    <div class="textarea-container">
+                        <textarea id="prescription-text" placeholder="e.g. Tab Amoxicillin 500mg TDS × 5 days PC..."></textarea>
+                        <div class="char-count">MEDICAL RECORD INPUT <span id="char-counter">0</span> / 1000</div>
+                    </div>
+                </div>
+
+                <div id="upload-tab" class="tab-content" style="display: none;">
+                    <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                        <div class="upload-content">
+                            <span class="upload-icon">📷</span>
+                            <p>Drag & Drop prescription image here</p>
+                            <p class="upload-sub">or click to browse</p>
+                        </div>
+                        <input type="file" id="file-input" accept="image/*" hidden onchange="app.handleFileSelect(event)">
+                        <img id="image-preview" src="" alt="Preview" style="display:none; max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px;">
+                    </div>
+                </div>
+
+                <div class="verification-badge">
+                    <div class="badge-icon">🛡️</div>
+                    <div class="badge-text">
+                        <strong>Clinical AI Verification</strong>
+                        <p>Our clinical-grade engine will scan your input for drug-drug interactions and dosage compliance against your history.</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-full mt-4" id="analyze-btn" onclick="app.analyzePrescription()">
+                    <span class="icon">🔍</span> Analyze Prescription
+                </button>
+                
+                <div class="loader-container" id="analyze-loader" style="display: none;">
+                    <div class="pill-spinner"></div>
+                    <p>Decoding medical jargon...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="view-section">
+            <div class="header-with-title">
+                <h2>Prescription Analysis</h2>
+                <p>Analysis complete. We've decoded your prescription into actionable steps and safety reminders.</p>
+            </div>
+            
+            <div class="results-grid">
+                <!-- Card A: Medicines -->
+                <div class="card result-card" id="card-medicines">
+                    <div class="card-header">
+                        <span class="icon text-mint flex align-center gap-2"><div class="pill-icon small"><div class="pill-left"></div><div class="pill-right"></div></div> MEDICINES</span>
+                    </div>
+                    <div class="card-body" id="medicines-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Card B: Instructions -->
+                <div class="card result-card" id="card-instructions">
+                    <div class="card-header flex-between">
+                        <div class="flex align-center gap-2"><span class="icon">📋</span> INSTRUCTIONS</div>
+                        <button class="btn-micro outline" onclick="app.copyInstructions()">📋 COPY ALL</button>
+                    </div>
+                    <div class="card-body">
+                        <ul class="step-list" id="instructions-container">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Card C: Diet & Safety Tips -->
+                <div class="card result-card" id="card-diet">
+                    <div class="card-header">
+                        <div class="flex align-center gap-2"><span class="icon">🍴</span> DIET & SAFETY</div>
+                    </div>
+                    <div class="card-body" id="tips-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Card D: Reminders -->
+                <div class="card result-card" id="card-reminders">
+                    <div class="card-header">
+                        <div class="flex align-center gap-2"><span class="icon">⏰</span> SET REMINDERS</div>
+                    </div>
+                    <div class="card-body" id="set-reminders-container">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary btn-full" onclick="app.saveReminders()">
+                            💾 SAVE REMINDERS
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn btn-outline outline btn-full mt-4" onclick="app.showSection('input-section')">
+                <span class="icon">🔄</span> ANALYZE ANOTHER PRESCRIPTION
+            </button>
+        </section>
+
+        <!-- Symptom Check Section -->
+        <section id="symptom-section" class="view-section">
+            <div class="header-with-title">
+                <h2>Symptom Check</h2>
+                <p>Describe what you're feeling to get immediate severity guidance.</p>
+            </div>
+            <div class="card main-input-card">
+                <textarea id="symptom-input" placeholder="e.g. I have a severe headache and have been vomiting..."></textarea>
+                <div class="input-helper mt-2">
+                    <label>Current Medicines (comma separated):</label>
+                    <input type="text" id="symptom-medicines" class="input-field" placeholder="e.g. Amoxicillin, Paracetamol">
+                </div>
+                <button class="btn btn-primary btn-full mt-4" onclick="app.checkSymptoms()">
+                    Check Severity
+                </button>
+                <div class="loader-container" id="symptom-loader" style="display: none;">
+                    <div class="pill-spinner"></div>
+                </div>
+                
+                <div id="severity-result" class="severity-card mt-4" style="display: none;">
+                    <div class="severity-header flex flex-col align-center">
+                        <span class="emoji enormous" id="sev-emoji">🔴</span>
+                        <h3 id="sev-level">Severe</h3>
+                    </div>
+                    <p id="sev-guidance" class="text-center mt-2">Seek immediate medical attention.</p>
+                    <div class="severity-bar-container mt-4">
+                        <div class="severity-bar" id="sev-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reminders Section -->
+        <section id="reminders-section" class="view-section">
+            <div class="header-with-title flex-between align-center">
+                <div>
+                    <span class="pre-title text-mint">PATIENT SCHEDULE</span>
+                    <h2>My Reminders</h2>
+                </div>
+                <button class="btn btn-primary" onclick="app.showSection('input-section')">+ New Entry</button>
+            </div>
+            
+            <div class="reminders-layout">
+                <div class="reminders-list" id="saved-reminders-list">
+                    <!-- populated by JS -->
+                </div>
+                
+                <div class="reminders-sidebar">
+                    <div class="card result-card">
+                        <div class="card-header">Adherence Rate</div>
+                        <div class="card-body">
+                            <div class="adherence-score">94% <span class="text-sm">LAST 7 DAYS</span></div>
+                            <div class="adherence-chart mb-4 mt-2">
+                                <div class="bar" style="height: 40%"></div>
+                                <div class="bar" style="height: 60%"></div>
+                                <div class="bar" style="height: 50%"></div>
+                                <div class="bar" style="height: 80%"></div>
+                                <div class="bar" style="height: 90%"></div>
+                                <div class="bar full" style="height: 100%"></div>
+                                <div class="bar full" style="height: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card result-card mt-4">
+                        <div class="card-body">
+                            <div class="alert-box warning no-border">
+                                <div class="alert-title flex align-center gap-2"><span class="icon">⚠️</span> SAFETY CHECK</div>
+                                <p class="text-sm mt-2">Always take medications exactly as prescribed. Do not skip doses without consulting your doctor.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history-section" class="view-section">
+            <div class="header-with-title">
+                <h2>📁 Past Prescriptions</h2>
+                <p>Access your historical medication scans and analysis reports. All data is processed locally for your privacy.</p>
+            </div>
+            
+            <div class="history-list" id="history-list">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="disclaimer-banner flex justify-center align-center">
+        <span><span class="icon">⚖️</span> RXCLEAR IS FOR INFORMATIONAL PURPOSES ONLY. ALWAYS FOLLOW YOUR DOCTOR'S INSTRUCTIONS. NOT A SUBSTITUTE FOR MEDICAL ADVICE.</span>
+    </footer>
+
+    <div class="toast" id="toast">Copied!</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
