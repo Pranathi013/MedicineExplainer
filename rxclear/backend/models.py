@@ -13,3 +13,7 @@ class ReminderCreate(BaseModel):
 class SymptomCheckRequest(BaseModel):
     symptoms: str
     current_medicines: List[str]
+
+class EmergencyContactCreate(BaseModel):
+    name: str
+    phone: str

@@ -24,6 +24,7 @@
             <div class="nav-links">
                 <a href="#" class="nav-link active" data-target="hero" onclick="app.showSection('hero')">HOME</a>
                 <a href="#" class="nav-link" data-target="symptom-section" onclick="app.showSection('symptom-section')">SYMPTOM CHECK</a>
+                <a href="#" class="nav-link" data-target="emergency-section" onclick="app.showSection('emergency-section')" style="color: #FF4757; font-weight: 700;">🚑 EMERGENCY</a>
                 <a href="#" class="nav-link" data-target="reminders-section" onclick="app.showSection('reminders-section')">REMINDERS</a>
                 <a href="#" class="nav-link" data-target="history-section" onclick="app.showSection('history-section')">HISTORY</a>
             </div>
@@ -136,6 +137,16 @@
                     </div>
                 </div>
 
+                <!-- Card E: Side Effects & Actions -->
+                <div class="card result-card" id="card-side-effects">
+                    <div class="card-header">
+                        <div class="flex align-center gap-2"><span class="icon">🩺</span> SIDE EFFECTS & ACTIONS</div>
+                    </div>
+                    <div class="card-body" id="side-effects-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
                 <!-- Card C: Diet & Safety Tips -->
                 <div class="card result-card" id="card-diet">
                     <div class="card-header">
@@ -146,19 +157,14 @@
                     </div>
                 </div>
 
-                <!-- Card D: Reminders -->
-                <div class="card result-card" id="card-reminders">
-                    <div class="card-header">
-                        <div class="flex align-center gap-2"><span class="icon">⏰</span> SET REMINDERS</div>
-                    </div>
-                    <div class="card-body" id="set-reminders-container">
-                        <!-- Populated by JS -->
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-primary btn-full" onclick="app.saveReminders()">
-                            💾 SAVE REMINDERS
-                        </button>
-                    </div>
+                <!-- Card D: Reminders Nav -->
+                <div class="card result-card flex flex-col justify-center align-center" style="min-height: 200px; text-align: center; background: rgba(0, 229, 160, 0.05); border: 2px dashed rgba(0, 229, 160, 0.3);">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⏰</div>
+                    <h3 class="text-mint">Setup Reminders</h3>
+                    <p class="text-sm text-muted mb-4 mt-2">Optimal schedule generated.</p>
+                    <button class="btn btn-primary" onclick="app.showSection('reminders-section')">
+                        View Suggestions ➜
+                    </button>
                 </div>
             </div>
             
@@ -210,8 +216,21 @@
             </div>
             
             <div class="reminders-layout">
-                <div class="reminders-list" id="saved-reminders-list">
-                    <!-- populated by JS -->
+                <div class="reminders-list">
+                    <div id="suggestions-box" style="display: none; background: rgba(0,229,160,0.05); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; border-left: 3px solid #00E5A0;">
+                        <h3 class="text-mint mb-3 flex align-center gap-2"><span class="icon">✨</span> Suggested Schedule</h3>
+                        <div id="set-reminders-container" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <!-- Populated by JS -->
+                        </div>
+                        <button class="btn btn-primary btn-full mt-4" onclick="app.saveReminders()">
+                            💾 SAVE APPROVED REMINDERS
+                        </button>
+                    </div>
+
+                    <h3 class="mb-3 flex align-center gap-2"><span class="icon">⏰</span> Saved Reminders</h3>
+                    <div id="saved-reminders-list">
+                        <!-- populated by JS -->
+                    </div>
                 </div>
                 
                 <div class="reminders-sidebar">
@@ -254,6 +273,19 @@
                 <!-- Populated by JS -->
             </div>
         </section>
+        <!-- Emergency Section -->
+        <section id="emergency-section" class="view-section">
+            <div class="header-with-title flex-between align-center">
+                <div>
+                    <span class="pre-title" style="color: #FF4757; font-weight: 700; letter-spacing: 1px;">EMERGENCY SUPPORT</span>
+                    <h2>Immediate Help</h2>
+                </div>
+            </div>
+            
+            <div id="emergency-content" style="display: flex; flex-direction: column; gap: 1.5rem; max-width: 800px; margin: 0 auto; width: 100%;">
+                <div class="loader-container" id="emergency-loader" style="display: flex; margin: 3rem auto;"><div class="pill-spinner"></div></div>
+            </div>
+        </section>
     </main>
 
     <footer class="disclaimer-banner flex justify-center align-center">
@@ -262,6 +294,6 @@
 
     <div class="toast" id="toast">Copied!</div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=2"></script>
 </body>
 </html>

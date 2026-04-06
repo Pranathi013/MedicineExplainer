@@ -22,6 +22,16 @@ def init_db():
         )
     ''')
 
+    # Table: emergency_contacts
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS emergency_contacts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            phone TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     # Table: reminders
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS reminders (

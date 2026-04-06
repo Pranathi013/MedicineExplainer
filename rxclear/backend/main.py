@@ -6,9 +6,9 @@ import json
 import shutil
 from typing import List
 
-from models import AnalyzeRequest, ReminderCreate, SymptomCheckRequest
-from database import init_db, get_db_connection
-import groq_llm
+from backend.models import AnalyzeRequest, ReminderCreate, SymptomCheckRequest, EmergencyContactCreate
+from backend.database import init_db, get_db_connection
+from backend import groq_llm
 
 app = FastAPI()
 
@@ -94,6 +94,58 @@ async def delete_reminder(id: int):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM reminders WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    return {"success": True}
+
+@app.get("/api/emergency")
+async def get_emergency_support():
+    return {
+        "emergency_support": {
+          "ambulance": {
+            "available": True,
+            "contact_numbers": ["108", "102"],
+            "description": "Call ambulance immediately in case of emergency",
+            "estimated_response": "10-15 minutes"
+          },
+          "hospitals": [
+            {
+              "name": "Nearest Hospital",
+              "distance": "2 km",
+              "type": "24/7 Emergency"
+            }
+          ],
+          "general_instruction": "In case of severe symptoms, seek immediate medical help."
+        }
+    }
+
+@app.post("/api/emergency/contacts")
+async def create_emergency_contact(contact: EmergencyContactCreate):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO emergency_contacts (name, phone) VALUES (?, ?)",
+        (contact.name, contact.phone)
+    )
+    contact_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return {"id": contact_id, "success": True}
+
+@app.get("/api/emergency/contacts")
+async def get_emergency_contacts():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM emergency_contacts ORDER BY created_at DESC")
+    rows = cursor.fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+@app.delete("/api/emergency/contacts/{id}")
+async def delete_emergency_contact(id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM emergency_contacts WHERE id=?", (id,))
     conn.commit()
     conn.close()
     return {"success": True}

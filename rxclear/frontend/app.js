@@ -35,6 +35,7 @@ const app = {
 
         if(sectionId === 'history-section') this.loadHistory();
         if(sectionId === 'reminders-section') this.loadReminders();
+        if(sectionId === 'emergency-section') this.loadEmergency();
     },
 
     switchTab(tab) {
@@ -138,14 +139,16 @@ const app = {
                                 ${med.drug_class ? `<span class="badge text-mint">${med.drug_class}</span>` : ''}
                             </div>
                         </div>
-                        ${med.when_to_take ? `<div class="chip"><span>☀️</span> ${med.when_to_take}</div>` : ''}
+                        ${(med.timing || med.when_to_take) ? `<div class="chip"><span>☀️</span> ${med.timing || med.when_to_take}</div>` : ''}
                     </div>
                     <div class="medicine-expand" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">
                         ℹ️ More Info ▾
                     </div>
-                    <div class="medicine-details">
+                    <div class="medicine-details" style="display:none;">
                         <p><strong>Generic:</strong> ${med.generic_name || 'N/A'}</p>
                         <p><strong>Purpose:</strong> ${med.purpose || 'N/A'}</p>
+                        <p><strong>How to take:</strong> ${med.how_to_take || 'N/A'}</p>
+                        <p><strong>Missed dose:</strong> ${med.missed_dose || 'N/A'}</p>
                     </div>
                 </div>
             `;
@@ -155,58 +158,203 @@ const app = {
         // Render Instructions
         const instContainer = document.getElementById('instructions-container');
         instContainer.innerHTML = '';
+        
+        if (data.overall_summary) {
+            instContainer.insertAdjacentHTML('beforeend', `
+                <div class="mb-3 p-3" style="background: rgba(0,229,160,0.05); border-radius: 8px; border-left: 3px solid #00E5A0;">
+                    <strong class="text-mint">Summary</strong><br>
+                    <span class="text-sm">${data.overall_summary}</span>
+                </div>
+            `);
+        }
+
         (data.instructions || []).forEach((inst, index) => {
             const delay = index * 0.1;
             instContainer.insertAdjacentHTML('beforeend', `
                 <li class="step-item" style="animation-delay: ${delay}s">${inst}</li>
             `);
         });
+        
+        if (data.combination_explanation) {
+            instContainer.insertAdjacentHTML('beforeend', `
+                <div class="mt-4 p-3" style="background: rgba(0,229,160,0.1); border-radius: 8px;">
+                    <strong>Why this combination?</strong><br>
+                    <span class="text-sm">${data.combination_explanation}</span>
+                </div>
+            `);
+        }
+
+        // Render Side Effects & Actions
+        const seContainer = document.getElementById('side-effects-container');
+        seContainer.innerHTML = '';
+        
+        let hasSideEffects = false;
+        (data.medicines || []).forEach(med => {
+            if (med.side_effects_action && Array.isArray(med.side_effects_action) && med.side_effects_action.length > 0) {
+                hasSideEffects = true;
+                
+                let medHTML = `<div class="mb-3">
+                    <h4 class="text-mint mb-2" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; font-size: 1rem;">💊 ${med.name}</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">`;
+                
+                med.side_effects_action.forEach(se => {
+                    let color = '#00E5A0'; // green
+                    if (se.severity === 'moderate') { color = '#F5A623'; }
+                    if (se.severity === 'severe') { color = '#FF4757'; }
+                    
+                    let buttonsHTML = '';
+                    if (se.stop_medicine) {
+                        buttonsHTML += `<div style="background: rgba(255,71,87,0.1); border: 1px solid #FF4757; color: #FF4757; padding: 4px 8px; border-radius: 4px; display: inline-block; font-weight: 600; font-size: 0.75rem; margin-right: 0.5rem; margin-top: 0.5rem;">🛑 STOP MEDICINE</div>`;
+                    }
+                    if (se.emergency) {
+                         buttonsHTML += `<button class="btn btn-primary mt-2" style="background:#FF4757; border-color:#FF4757; padding: 6px 12px; font-size: 0.8rem; margin-right: 0.5rem;">🚑 Call Ambulance</button>`;
+                    } else if (se.doctor_required) {
+                         buttonsHTML += `<button class="btn btn-primary mt-2" style="background:#F5A623; border-color:#F5A623; color:#111; padding: 6px 12px; font-size: 0.8rem; margin-right: 0.5rem;">👨‍⚕️ Contact Doctor</button>`;
+                    }
+
+                    medHTML += `
+                        <div style="background: rgba(255,255,255,0.03); border-left: 3px solid ${color}; padding: 1rem; border-radius: 6px;">
+                            <div class="flex-between align-start mb-2">
+                                <strong>${se.effect}</strong>
+                                <span style="font-size:0.7rem; padding: 2px 6px; border-radius: 4px; background: ${color}20; color: ${color}; text-transform: uppercase;">${se.severity}</span>
+                            </div>
+                            <p class="text-sm text-muted mb-2">${se.description}</p>
+                            <p class="text-sm"><strong>Action:</strong> ${se.action}</p>
+                            ${buttonsHTML ? `<div class="mt-2">${buttonsHTML}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                medHTML += `</div></div>`;
+                seContainer.insertAdjacentHTML('beforeend', medHTML);
+            }
+        });
+        if (!hasSideEffects) {
+             seContainer.innerHTML = '<p class="text-muted text-sm" style="font-style: italic;">No specific side effects data provided for these medicines.</p>';
+        }
 
         // Render Tips
         const tipsContainer = document.getElementById('tips-container');
         tipsContainer.innerHTML = '';
+        
         (data.diet_tips || []).forEach(tip => {
+            let icon = '📌';
+            let classType = 'info';
+            if (tip.type === 'caution' || tip.type === 'avoid' || tip.type === 'warning') {
+                icon = '⚠️';
+                classType = 'danger';
+            } else if (tip.type === 'tip') {
+                icon = '💡';
+                classType = 'info';
+            }
+            let title = (tip.title || tip.type || 'NOTE').toUpperCase();
+            
             tipsContainer.insertAdjacentHTML('beforeend', `
-                <div class="tip-item ${tip.type || 'info'}">
-                    <div class="tip-icon">${tip.icon || '📌'}</div>
+                <div class="tip-item ${classType}">
+                    <div class="tip-icon">${icon}</div>
                     <div>
-                        <strong>${tip.type === 'info' ? 'DIET TIP' : tip.type === 'warning' ? 'CAUTION' : 'NOTE'}</strong>
-                        <p>${tip.tip}</p>
-                    </div>
-                </div>
-            `);
-        });
-        (data.warnings || []).forEach(warn => {
-             tipsContainer.insertAdjacentHTML('beforeend', `
-                <div class="tip-item danger">
-                    <div class="tip-icon">⚠️</div>
-                    <div>
-                        <strong>WARNING</strong>
-                        <p>${warn.warning}</p>
+                        <strong>${title}</strong>
+                        <p>${tip.detail || tip.tip || ''}</p>
                     </div>
                 </div>
             `);
         });
 
-        // Render Set Reminders
-        const remContainer = document.getElementById('set-reminders-container');
-        remContainer.innerHTML = '';
+        (data.food_drug_interactions || []).forEach(interaction => {
+             tipsContainer.insertAdjacentHTML('beforeend', `
+                <div class="tip-item danger">
+                    <div class="tip-icon">⛔</div>
+                    <div>
+                        <strong>AVOID (FOOD DRUG INTERACTION) - ${interaction.medicine}</strong>
+                        <p>${interaction.avoid}</p>
+                    </div>
+                </div>
+            `);
+        });
+
         (data.medicines || []).forEach(med => {
-            (med.frequency_times || []).forEach(time => {
-                remContainer.insertAdjacentHTML('beforeend', `
-                    <div class="dose-row" data-med="${med.name}" data-time="${time}" data-freq="${med.frequency}" data-days="${parseInt(med.duration)||0}">
-                        <div class="dose-info">
-                            <div class="dose-name">${med.name}</div>
-                            <div class="dose-time">${time}</div>
+            if (med.warnings && Array.isArray(med.warnings)) {
+                 med.warnings.forEach(warn => {
+                     let text = warn.warning || warn;
+                     tipsContainer.insertAdjacentHTML('beforeend', `
+                        <div class="tip-item danger">
+                            <div class="tip-icon">⚠️</div>
+                            <div>
+                                <strong>WARNING - ${med.name}</strong>
+                                <p>${text}</p>
+                            </div>
                         </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" checked class="reminder-toggle">
-                            <span class="slider"></span>
-                        </label>
+                    `);
+                 });
+            }
+        });
+
+        if (data.warnings && Array.isArray(data.warnings)) {
+            data.warnings.forEach(warn => {
+                 tipsContainer.insertAdjacentHTML('beforeend', `
+                    <div class="tip-item danger">
+                        <div class="tip-icon">⚠️</div>
+                        <div>
+                            <strong>WARNING</strong>
+                            <p>${warn.warning || warn}</p>
+                        </div>
                     </div>
                 `);
             });
-        });
+        }
+
+        // Render Set Reminders
+        const remContainer = document.getElementById('set-reminders-container');
+        remContainer.innerHTML = '';
+        
+        if (data.reminders && Array.isArray(data.reminders)) {
+            data.reminders.forEach(rem => {
+                (rem.times || []).forEach(time => {
+                    let matchingMed = (data.medicines || []).find(m => m.name === rem.medicine);
+                    let freq = matchingMed ? matchingMed.frequency : 'Daily';
+                    let duration = matchingMed ? parseInt(matchingMed.duration) || 0 : 0;
+                    
+                    remContainer.insertAdjacentHTML('beforeend', `
+                        <div class="dose-row" data-med="${rem.medicine}" data-time="${time}" data-freq="${freq}" data-days="${duration}">
+                            <div class="dose-info">
+                                <div class="dose-name">${rem.medicine}</div>
+                                <div class="dose-time">${time} <span style="font-size: 0.8rem; font-weight:normal; margin-left: 5px;">(${rem.note || freq})</span></div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked class="reminder-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    `);
+                });
+            });
+        } else {
+            (data.medicines || []).forEach(med => {
+                (med.frequency_times || []).forEach(time => {
+                    remContainer.insertAdjacentHTML('beforeend', `
+                        <div class="dose-row" data-med="${med.name}" data-time="${time}" data-freq="${med.frequency}" data-days="${parseInt(med.duration)||0}">
+                            <div class="dose-info">
+                                <div class="dose-name">${med.name}</div>
+                                <div class="dose-time">${time}</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked class="reminder-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    `);
+                });
+            });
+        }
+        
+        const suggBox = document.getElementById('suggestions-box');
+        if (suggBox) {
+            if (remContainer.innerHTML.trim() !== '') {
+                suggBox.style.display = 'block';
+            } else {
+                suggBox.style.display = 'none';
+            }
+        }
     },
 
     async saveReminders() {
@@ -236,6 +384,11 @@ const app = {
         }
         
         this.showToast(`Saved ${savedCount} reminders!`);
+        
+        const suggBox = document.getElementById('suggestions-box');
+        if (suggBox) suggBox.style.display = 'none';
+        document.getElementById('set-reminders-container').innerHTML = '';
+
         this.loadReminders(); // Refresh background list
         this.showSection('reminders-section');
     },
@@ -358,7 +511,9 @@ const app = {
                 return;
             }
 
-            items.forEach(item => {
+            window._rxHistory = items;
+            
+            items.forEach((item, index) => {
                 const date = new Date(item.created_at).toLocaleString();
                 let title = 'Prescription Scan';
                 let medCount = 0;
@@ -375,7 +530,7 @@ const app = {
                             <div class="hist-main">${title}</div>
                             <div class="badge mt-2">${medCount} MEDICINE${medCount !== 1?'S':''}</div>
                         </div>
-                        <button class="btn btn-outline" onclick='app.viewHistoryItem(${JSON.stringify(item.result_json).replace(/'/g, "\\'")})'>
+                        <button class="btn btn-outline" onclick="app.viewHistoryItem(window._rxHistory[${index}].result_json)">
                             View Results →
                         </button>
                     </div>
@@ -412,6 +567,174 @@ const app = {
         toast.innerText = message;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
+    },
+
+    async loadEmergency() {
+        const container = document.getElementById('emergency-content');
+        if(!container) return;
+        
+        try {
+            const res = await fetch(`${API_BASE}/emergency`);
+            const data = await res.json();
+            const emergencyData = data.emergency_support;
+            
+            let html = `
+                <style>
+                    @keyframes emergency-pulse {
+                        0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+                        70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); }
+                        100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+                    }
+                    .btn-emergency-pulse {
+                        animation: emergency-pulse 2s infinite;
+                        background: #FF4757 !important;
+                        border-color: #FF4757 !important;
+                        color: white !important;
+                        font-size: 1.2rem !important;
+                        padding: 1rem !important;
+                        text-decoration: none;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    .emb {
+                        display: block;
+                        text-align: center;
+                        background: rgba(255, 255, 255, 0.05);
+                        padding: 1.5rem;
+                        border-radius: 12px;
+                        border: 1px solid rgba(255,255,255,0.1);
+                        transition: all 0.2s;
+                        color: white;
+                        text-decoration: none;
+                    }
+                    .emb:hover {
+                        background: rgba(255, 255, 255, 0.1);
+                    }
+                </style>
+                <div class="alert-box danger" style="border: none;">
+                    <strong>⚠️ GENERAL INSTRUCTION</strong>
+                    <p class="mt-2 text-sm">${emergencyData.general_instruction}</p>
+                </div>
+                
+                <h3 class="mt-2 mb-2">Ambulance Services</h3>
+                <p class="text-sm text-muted">${emergencyData.ambulance.description}</p>
+                <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+            `;
+            
+            emergencyData.ambulance.contact_numbers.forEach(num => {
+                html += `
+                    <a href="tel:${num}" class="emb">
+                        <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem; color:#FF4757; font-weight: bold;">📞 ${num}</span>
+                        <span class="text-sm">Tap to call</span>
+                    </a>
+                `;
+            });
+            
+            html += `</div>
+                <div class="mt-4 mb-2">
+                    <a href="tel:${emergencyData.ambulance.contact_numbers[0]}" class="btn btn-primary btn-full btn-emergency-pulse">
+                        🚑 CALL AMBULANCE IMMEDIATELY
+                    </a>
+                    <p class="text-center text-sm text-muted mt-2">Estimated Response: ${emergencyData.ambulance.estimated_response}</p>
+                </div>
+                
+                <h3 class="mt-4 mb-2">Nearby Hospitals (Simulation)</h3>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+            `;
+            
+            emergencyData.hospitals.forEach(hosp => {
+                html += `
+                    <div style="background: rgba(0, 229, 160, 0.05); border-left: 3px solid #00E5A0; padding: 1.2rem; border-radius: 8px;">
+                        <div class="flex-between align-center mb-2">
+                            <strong>🏥 ${hosp.name}</strong>
+                            <span class="badge" style="background: rgba(0, 229, 160, 0.2); color: #00E5A0;">${hosp.distance}</span>
+                        </div>
+                        <p class="text-sm text-muted">${hosp.type}</p>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            
+            // Fetch Custom Contacts
+            let customContacts = [];
+            try {
+                const conRes = await fetch(`${API_BASE}/emergency/contacts`);
+                if(conRes.ok) customContacts = await conRes.json();
+            } catch(ce) { console.error('Failed to load custom contacts:', ce); }
+            
+            html += `<h3 class="mt-4 mb-2">My Custom Contacts</h3>
+                <div style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem;">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <input type="text" id="new-contact-name" placeholder="Name (e.g. Nurse Jane)" style="flex: 1; min-width: 150px;" class="input-field">
+                        <input type="tel" id="new-contact-phone" placeholder="Phone Number" style="flex: 1; min-width: 150px;" class="input-field">
+                        <button class="btn btn-outline" onclick="app.saveEmergencyContact()">Add</button>
+                    </div>
+                </div>
+                <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+            `;
+            
+            if (customContacts.length === 0) {
+                 html += `<p class="text-sm text-muted" style="grid-column: 1 / -1; display:flex; justify-content:center;">No custom contacts added yet.</p>`;
+            } else {
+                customContacts.forEach(contact => {
+                    html += `
+                        <div style="background: rgba(0,229,160,0.05); padding: 1rem; border-radius: 8px; position:relative; border-left: 3px solid #00E5A0;">
+                            <button onclick="app.deleteEmergencyContact(${contact.id})" style="position:absolute; top:5px; right:5px; background:none; border:none; color:#FF4757; font-size:1rem; cursor:pointer;" title="Delete">🗑️</button>
+                            <div style="font-weight: 600; font-size: 1.1rem; color: #FFF; margin-bottom: 0.5rem;">${contact.name}</div>
+                            <a href="tel:${contact.phone}" style="display:block; text-decoration:none; color: #00E5A0; font-weight: bold; background: rgba(0,229,160,0.1); padding: 6px; border-radius: 4px; text-align: center;">📞 ${contact.phone}</a>
+                        </div>
+                    `;
+                });
+            }
+            html += `</div>`;
+            
+            container.innerHTML = html;
+        } catch(e) {
+            console.error('Failed to load emergency data:', e);
+            container.innerHTML = `<div class="alert-box danger">Failed to load emergency services. Please check connection or dial 911 directly.</div>`;
+        }
+    },
+    
+    async saveEmergencyContact() {
+        const nameInput = document.getElementById('new-contact-name');
+        const phoneInput = document.getElementById('new-contact-phone');
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        
+        if (!name || !phone) {
+            this.showToast('Please enter both name and phone number');
+            return;
+        }
+        
+        try {
+            await fetch(`${API_BASE}/emergency/contacts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone })
+            });
+            this.showToast('Contact added!');
+            this.loadEmergency(); // Refresh the list
+        } catch(e) {
+            console.error('Error adding contact:', e);
+            this.showToast('Failed to add contact');
+        }
+    },
+    
+    async deleteEmergencyContact(id) {
+        if (!confirm('Delete this contact?')) return;
+        
+        try {
+            await fetch(`${API_BASE}/emergency/contacts/${id}`, {
+                method: 'DELETE'
+            });
+            this.showToast('Contact deleted!');
+            this.loadEmergency(); // Refresh the list
+        } catch(e) {
+            console.error('Error deleting contact:', e);
+            this.showToast('Failed to delete contact');
+        }
     }
 };
 
