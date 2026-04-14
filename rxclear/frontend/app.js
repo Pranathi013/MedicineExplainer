@@ -159,10 +159,27 @@ const app = {
         const instContainer = document.getElementById('instructions-container');
         instContainer.innerHTML = '';
         
+        let copyButton = document.querySelector('#card-instructions .btn-copy');
+        if (!copyButton) {
+        	// User wanted a copy button top right
+        	const instCard = document.getElementById('card-instructions');
+        	if (instCard) {
+        		// Remove old copy button if any
+        		let oldBtn = instCard.querySelector('.flex-between .btn-micro');
+        		if(oldBtn) oldBtn.remove();
+        		
+        		let newBtn = document.createElement('button');
+        		newBtn.className = 'btn-micro outline btn-copy';
+        		newBtn.innerHTML = '📋 Copy all';
+        		newBtn.onclick = () => app.copyInstructions();
+        		instCard.appendChild(newBtn);
+        	}
+        }
+
         if (data.overall_summary) {
             instContainer.insertAdjacentHTML('beforeend', `
-                <div class="mb-3 p-3" style="background: rgba(0,229,160,0.05); border-radius: 8px; border-left: 3px solid #00E5A0;">
-                    <strong class="text-mint">Summary</strong><br>
+                <div class="inst-summary-strip">
+                    <strong>Summary</strong><br>
                     <span class="text-sm">${data.overall_summary}</span>
                 </div>
             `);
@@ -170,16 +187,58 @@ const app = {
 
         (data.instructions || []).forEach((inst, index) => {
             const delay = index * 0.1;
-            instContainer.insertAdjacentHTML('beforeend', `
-                <li class="step-item" style="animation-delay: ${delay}s">${inst}</li>
-            `);
+            
+            // Heuristic coloring based on medicine names in instruction
+            let colorAccent = 'gray'; // general
+            let bgTint = '#16181f';
+            let pillColor = 'gray';
+            let pillBg = '#16181f';
+            let medicineName = '';
+
+            const lowerInst = inst.toLowerCase();
+            if (lowerInst.includes('amoxicillin')) {
+            	colorAccent = 'var(--accent-blue)'; bgTint = '#0d1a2e'; pillColor = '#7ec8f7'; pillBg = '#0c2a4a'; medicineName = 'Amoxicillin';
+            } else if (lowerInst.includes('paracetamol')) {
+            	colorAccent = 'var(--accent-amber)'; bgTint = '#2a1a05'; pillColor = '#fad289'; pillBg = '#332007'; medicineName = 'Paracetamol';
+            } else if (lowerInst.includes('omeprazole')) {
+            	colorAccent = 'var(--accent-teal)'; bgTint = '#0a2118'; pillColor = '#5ee8bd'; pillBg = '#0b2b1f'; medicineName = 'Omeprazole';
+            }
+
+			// extract parts if it has colon
+			let content = inst;
+			let title = '';
+			if (inst.includes(':')) {
+				const parts = inst.split(':', 2);
+				title = parts[0].trim();
+				content = parts[1].trim();
+			} else if (medicineName) {
+				title = medicineName;
+			}
+
+            let html = `
+                <li class="step-item" style="animation-delay: ${delay}s; border-left-color: ${colorAccent}; background: ${bgTint}; --step-bg: ${colorAccent};">
+                    <style>
+                        .step-item:nth-child(${index + (data.overall_summary ? 2 : 1)})::before { background: ${colorAccent} !important; }
+                    </style>
+                    <div class="step-item-content inst-text">
+                        ${title ? `<div class="inst-med-name">${title}</div>` : ''}
+                        <div>${content}</div>
+                    </div>
+                </li>
+            `;
+            instContainer.insertAdjacentHTML('beforeend', html);
         });
         
         if (data.combination_explanation) {
             instContainer.insertAdjacentHTML('beforeend', `
-                <div class="mt-4 p-3" style="background: rgba(0,229,160,0.1); border-radius: 8px;">
-                    <strong>Why this combination?</strong><br>
-                    <span class="text-sm">${data.combination_explanation}</span>
+                <div class="mt-4">
+                    <div class="accordion-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">
+                        <strong>Why this combination?</strong>
+                        <span style="font-size: 0.8rem;">▾</span>
+                    </div>
+                    <div class="accordion-body inst-text">
+                        <span class="text-sm">${data.combination_explanation}</span>
+                    </div>
                 </div>
             `);
         }
@@ -581,12 +640,12 @@ const app = {
             let html = `
                 <style>
                     @keyframes emergency-pulse {
-                        0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
-                        70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); }
-                        100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+                        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+                        70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); }
+                        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
                     }
                     .btn-emergency-pulse {
-                        animation: emergency-pulse 2s infinite;
+                        animation: emergency-pulse 1.5s infinite ease-out;
                         background: #FF4757 !important;
                         border-color: #FF4757 !important;
                         color: white !important;

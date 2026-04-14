@@ -11,6 +11,7 @@ from backend.database import init_db, get_db_connection
 from backend import groq_llm
 
 app = FastAPI()
+# Trigger auto-reload for new API key
 
 # Enable CORS
 app.add_middleware(
