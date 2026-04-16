@@ -1,0 +1,408 @@
+/* ===== HERO SECTION ANIMATIONS ===== */
+
+.hero-section-med {
+    position: relative;
+    overflow: hidden;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #F4F7FC 0%, #E8F0FF 50%, #EBF9F5 100%);
+}
+
+/* ── 1. HEARTBEAT PULSE WAVES ── */
+.heartbeat-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.pulse-wave {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 102, 255, 0.25);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    animation: heartbeat-pulse 3s ease-out infinite;
+}
+
+.pulse-wave:nth-child(1) {
+    width: 120px; height: 120px;
+    animation-delay: 0s;
+}
+.pulse-wave:nth-child(2) {
+    width: 200px; height: 200px;
+    animation-delay: 0.5s;
+    border-color: rgba(0, 200, 150, 0.2);
+}
+.pulse-wave:nth-child(3) {
+    width: 300px; height: 300px;
+    animation-delay: 1s;
+    border-color: rgba(0, 102, 255, 0.15);
+}
+.pulse-wave:nth-child(4) {
+    width: 420px; height: 420px;
+    animation-delay: 1.5s;
+    border-color: rgba(0, 200, 150, 0.1);
+}
+.pulse-wave:nth-child(5) {
+    width: 560px; height: 560px;
+    animation-delay: 2s;
+    border-color: rgba(0, 102, 255, 0.08);
+}
+
+@keyframes heartbeat-pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.3);
+        opacity: 0.9;
+    }
+    70% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.4);
+        opacity: 0;
+    }
+}
+
+/* ── 2. ECG / HEARTBEAT LINE ── */
+.ecg-container {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0.35;
+}
+
+.ecg-line {
+    width: 200%;
+    height: 100%;
+    animation: ecg-scroll 4s linear infinite;
+}
+
+@keyframes ecg-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* ── 3. FLOATING MEDICAL ICONS ── */
+.floating-icons-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.floating-med-icon {
+    position: absolute;
+    font-size: 2.2rem;
+    opacity: 0;
+    animation: float-in-out 8s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 102, 255, 0.2));
+}
+
+.floating-med-icon:nth-child(1)  { top: 12%; left: 8%;   animation-delay: 0s;    font-size: 2.5rem; }
+.floating-med-icon:nth-child(2)  { top: 55%; left: 6%;   animation-delay: 1.2s;  font-size: 1.8rem; }
+.floating-med-icon:nth-child(3)  { top: 80%; left: 18%;  animation-delay: 2.4s;  font-size: 2rem; }
+.floating-med-icon:nth-child(4)  { top: 15%; right: 8%;  animation-delay: 0.6s;  font-size: 2rem; }
+.floating-med-icon:nth-child(5)  { top: 50%; right: 6%;  animation-delay: 1.8s;  font-size: 2.5rem; }
+.floating-med-icon:nth-child(6)  { top: 78%; right: 18%; animation-delay: 3s;    font-size: 1.8rem; }
+.floating-med-icon:nth-child(7)  { top: 30%; left: 22%;  animation-delay: 3.6s;  font-size: 1.6rem; }
+.floating-med-icon:nth-child(8)  { top: 65%; right: 22%; animation-delay: 4.2s;  font-size: 1.6rem; }
+
+@keyframes float-in-out {
+    0%   { opacity: 0;   transform: translateY(20px) scale(0.8); }
+    15%  { opacity: 0.7; transform: translateY(0px)  scale(1); }
+    50%  { opacity: 0.6; transform: translateY(-15px) scale(1.05); }
+    85%  { opacity: 0.7; transform: translateY(0px)  scale(1); }
+    100% { opacity: 0;   transform: translateY(20px) scale(0.8); }
+}
+
+/* ── 4. GRADIENT MESH ── */
+.gradient-mesh {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.gradient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.25;
+    animation: orb-drift 12s ease-in-out infinite;
+}
+
+.gradient-orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0, 102, 255, 0.4), transparent 70%);
+    top: -100px; left: -100px;
+    animation-delay: 0s;
+}
+
+.gradient-orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0, 200, 150, 0.4), transparent 70%);
+    bottom: -80px; right: -80px;
+    animation-delay: 4s;
+}
+
+.gradient-orb-3 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0, 102, 255, 0.25), transparent 70%);
+    top: 40%; left: 40%;
+    animation-delay: 8s;
+}
+
+@keyframes orb-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33%       { transform: translate(30px, -20px) scale(1.05); }
+    66%       { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+/* ── 5. PARTICLE DRIFT ── */
+.particles-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: particle-drift linear infinite;
+    opacity: 0;
+}
+
+.particle:nth-child(1)  { width: 5px;  height: 5px;  background: rgba(0,102,255,0.6);  left: 5%;   animation-duration: 12s; animation-delay: 0s;   top: 90%; }
+.particle:nth-child(2)  { width: 3px;  height: 3px;  background: rgba(0,200,150,0.6);  left: 15%;  animation-duration: 10s; animation-delay: 1s;   top: 90%; }
+.particle:nth-child(3)  { width: 6px;  height: 6px;  background: rgba(0,102,255,0.4);  left: 25%;  animation-duration: 14s; animation-delay: 2s;   top: 90%; }
+.particle:nth-child(4)  { width: 4px;  height: 4px;  background: rgba(0,200,150,0.5);  left: 40%;  animation-duration: 11s; animation-delay: 0.5s; top: 90%; }
+.particle:nth-child(5)  { width: 5px;  height: 5px;  background: rgba(0,102,255,0.5);  left: 55%;  animation-duration: 13s; animation-delay: 3s;   top: 90%; }
+.particle:nth-child(6)  { width: 3px;  height: 3px;  background: rgba(0,200,150,0.6);  left: 70%;  animation-duration: 9s;  animation-delay: 1.5s; top: 90%; }
+.particle:nth-child(7)  { width: 6px;  height: 6px;  background: rgba(0,102,255,0.35); left: 80%;  animation-duration: 15s; animation-delay: 4s;   top: 90%; }
+.particle:nth-child(8)  { width: 4px;  height: 4px;  background: rgba(0,200,150,0.4);  left: 92%;  animation-duration: 10s; animation-delay: 2.5s; top: 90%; }
+
+@keyframes particle-drift {
+    0%   { transform: translateY(0) rotate(0deg);    opacity: 0; }
+    5%   { opacity: 0.8; }
+    95%  { opacity: 0.6; }
+    100% { transform: translateY(-600px) rotate(360deg); opacity: 0; }
+}
+
+/* ── 6. WAVE LAYERS ── */
+.wave-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.wave-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    animation: wave-flow linear infinite;
+}
+
+.wave-layer-1 {
+    animation-duration: 10s;
+    opacity: 0.2;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%230066FF' d='M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x bottom;
+    background-size: 50% 100%;
+}
+
+.wave-layer-2 {
+    animation-duration: 14s;
+    animation-direction: reverse;
+    opacity: 0.15;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%2300C896' d='M0,40 C360,90 720,10 1080,50 C1260,70 1380,30 1440,40 L1440,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x bottom;
+    background-size: 50% 100%;
+}
+
+.wave-layer-3 {
+    animation-duration: 18s;
+    opacity: 0.1;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%230066FF' d='M0,80 C180,30 360,90 540,60 C720,30 900,80 1080,50 C1260,20 1380,70 1440,80 L1440,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x bottom;
+    background-size: 50% 100%;
+}
+
+@keyframes wave-flow {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* ===== PAGE TRANSITION ANIMATIONS ===== */
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Animation utility classes */
+.anim-fade-in     { animation: fadeIn     0.45s ease both; }
+.anim-fade-in-up  { animation: fadeInUp   0.5s  ease both; }
+.anim-fade-in-down{ animation: fadeInDown 0.5s  ease both; }
+.anim-scale-in    { animation: scaleIn    0.4s  ease both; }
+.anim-slide-left  { animation: slideInLeft  0.4s ease both; }
+.anim-slide-right { animation: slideInRight 0.4s ease both; }
+
+/* Stagger helpers */
+.anim-delay-1 { animation-delay: 0.1s; }
+.anim-delay-2 { animation-delay: 0.2s; }
+.anim-delay-3 { animation-delay: 0.3s; }
+.anim-delay-4 { animation-delay: 0.4s; }
+.anim-delay-5 { animation-delay: 0.5s; }
+
+/* ===== HERO CONTENT ANIMATIONS ===== */
+.hero-badge-anim {
+    animation: fadeInDown 0.6s ease both;
+}
+
+.hero-title-anim {
+    animation: fadeInUp 0.7s ease 0.1s both;
+}
+
+.hero-subtitle-anim {
+    animation: fadeInUp 0.7s ease 0.2s both;
+}
+
+.hero-buttons-anim {
+    animation: fadeInUp 0.7s ease 0.35s both;
+}
+
+.hero-stats-anim {
+    animation: fadeInUp 0.7s ease 0.5s both;
+}
+
+/* ===== CARD ENTRANCE ===== */
+.card-stagger > * {
+    animation: fadeInUp 0.5s ease both;
+}
+
+.card-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+.card-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+.card-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+.card-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+
+/* ===== MEDICAL CROSS ROTATING ===== */
+.med-cross-rotate {
+    display: inline-block;
+    animation: med-spin 8s linear infinite;
+    opacity: 0.15;
+}
+
+@keyframes med-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ===== GRADIENT TEXT ANIMATION ===== */
+.gradient-text-anim {
+    background: linear-gradient(90deg, #0066FF, #00C896, #0066FF);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-text-flow 4s linear infinite;
+}
+
+@keyframes gradient-text-flow {
+    from { background-position: 0% center; }
+    to   { background-position: 200% center; }
+}
+
+/* ===== NOTIFICATION SLIDE ===== */
+@keyframes notif-slide-in {
+    from { transform: translateX(110%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes notif-slide-out {
+    from { transform: translateX(0);    opacity: 1; }
+    to   { transform: translateX(110%); opacity: 0; }
+}
+
+/* ===== CHART BAR FILL ===== */
+@keyframes bar-fill {
+    from { height: 0; }
+}
+
+.chart-bar {
+    animation: bar-fill 0.8s ease both;
+}
+
+/* ===== COUNTER NUMBER ===== */
+@keyframes count-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.count-anim {
+    animation: count-up 0.5s ease both;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .hero-section-med {
+        min-height: 520px;
+    }
+
+    .floating-med-icon:nth-child(3),
+    .floating-med-icon:nth-child(6),
+    .floating-med-icon:nth-child(7),
+    .floating-med-icon:nth-child(8) {
+        display: none;
+    }
+
+    .gradient-orb-3 {
+        display: none;
+    }
+
+    .pulse-wave:nth-child(4),
+    .pulse-wave:nth-child(5) {
+        display: none;
+    }
+}

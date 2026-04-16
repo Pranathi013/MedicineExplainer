@@ -1,45 +1,47 @@
 :root {
+  /* ── Medical Light Theme ── */
+
   /* Primary Colors */
-  --mint-primary: #00E5A0;
-  --mint-dark: #00D4AA;
+  --mint-primary: #0066FF;
+  --mint-dark: #0052CC;
   --alert-red: #FF4757;
-  --warning-amber: #FFB400;
-  
-  /* Backgrounds */
-  --bg-dark: #0F1117;
-  --bg-darker: #0A0E27;
-  --bg-surface: #1A1F3A;
-  
-  /* Text Colors */
-  --text-primary: #FFFFFF;
-  --text-secondary: #A0AEC0;
-  --text-muted: #7A8BA3;
-  
+  --warning-amber: #F5A623;
+
+  /* Backgrounds  — switched to clean white/light */
+  --bg-dark: #F4F7FC;
+  --bg-darker: #EBF0F8;
+  --bg-surface: #FFFFFF;
+
+  /* Text Colors — dark on light */
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+
   /* Status Colors */
-  --success-green: #10B981;
-  --warning-orange: #F59E0B;
+  --success-green: #27AE60;
+  --warning-orange: #F5A623;
   --error-red: #EF4444;
-  
-  /* Shadows & Effects */
-  --shadow-sm: 0 2px 8px rgba(0, 229, 160, 0.1);
-  --shadow-md: 0 4px 16px rgba(0, 229, 160, 0.15);
-  --shadow-lg: 0 8px 32px rgba(0, 229, 160, 0.2);
-  --glow-mint: 0 0 20px rgba(0, 229, 160, 0.4);
-  --glow-red: 0 0 20px rgba(255, 71, 87, 0.4);
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 102, 255, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 102, 255, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 102, 255, 0.18);
+  --glow-mint: 0 0 20px rgba(0, 102, 255, 0.25);
+  --glow-red:  0 0 20px rgba(255, 71,  87, 0.4);
 
   /* Project Specifics */
-  --card-bg: #16181f;
-  --border-color: #2a2d35;
-  --accent-mint: #00E5A0;
-  --accent-mint-dim: rgba(0, 229, 160, 0.15);
-  --accent-amber: #EF9F27;
+  --card-bg: #FFFFFF;
+  --border-color: #E2E8F0;
+  --accent-mint: #0066FF;
+  --accent-mint-dim: rgba(0, 102, 255, 0.1);
+  --accent-amber: #F5A623;
   --accent-red: #FF4757;
-  --accent-blue: #378ADD;
-  --accent-teal: #1D9E75;
-  --text-main: #E6EDF3;
+  --accent-blue: #0066FF;
+  --accent-teal: #00C896;
+  --text-main: #1A202C;
   --font-heading: 'Syne', sans-serif;
   --font-body: 'IBM Plex Sans', sans-serif;
-  --transition-smooth: all 0.15s ease;
+  --transition-smooth: all 0.2s ease;
 }
 
 /* ===== ANIMATION LIBRARY ===== */
@@ -281,7 +283,7 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  cursor: crosshair;
+  cursor: default;
 }
 
 /* Background Grid & Blurs */
@@ -292,8 +294,8 @@ body {
   width: 100%;
   height: 100%;
   background-image: 
-    linear-gradient(0deg, transparent 24%, rgba(0, 229, 160, 0.05) 25%, rgba(0, 229, 160, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 229, 160, 0.05) 75%, rgba(0, 229, 160, 0.05) 76%, transparent 77%, transparent),
-    linear-gradient(90deg, transparent 24%, rgba(0, 229, 160, 0.05) 25%, rgba(0, 229, 160, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 229, 160, 0.05) 75%, rgba(0, 229, 160, 0.05) 76%, transparent 77%, transparent);
+    linear-gradient(0deg, transparent 24%, rgba(0, 102, 255, 0.04) 25%, rgba(0, 102, 255, 0.04) 26%, transparent 27%, transparent 74%, rgba(0, 102, 255, 0.04) 75%, rgba(0, 102, 255, 0.04) 76%, transparent 77%, transparent),
+    linear-gradient(90deg, transparent 24%, rgba(0, 102, 255, 0.04) 25%, rgba(0, 102, 255, 0.04) 26%, transparent 27%, transparent 74%, rgba(0, 102, 255, 0.04) 75%, rgba(0, 102, 255, 0.04) 76%, transparent 77%, transparent);
   background-size: 50px 50px;
   z-index: -1;
   animation: pulse 4s ease-in-out infinite;
@@ -312,7 +314,7 @@ body {
   height: 400px;
   top: -100px;
   left: -100px;
-  background: rgba(0, 229, 160, 0.2);
+  background: rgba(0, 102, 255, 0.12);
 }
 
 .bg-blur.bottom-right {
@@ -320,7 +322,7 @@ body {
   height: 300px;
   bottom: -100px;
   right: -100px;
-  background: rgba(255, 71, 87, 0.1);
+  background: rgba(0, 200, 150, 0.08);
   animation: float 8s ease-in-out infinite;
 }
 
@@ -354,7 +356,7 @@ h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.5rem; }
   position: fixed;
   top: 0;
   width: 100%;
-  background: rgba(13, 17, 23, 0.8);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   z-index: 100;
@@ -470,7 +472,7 @@ h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.5rem; }
 .btn-primary {
   background: linear-gradient(135deg, var(--mint-primary), var(--mint-dark));
   border-color: var(--mint-primary);
-  color: #111;
+  color: #fff;
   transition: all 0.3s ease;
 }
 
@@ -518,7 +520,7 @@ h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.5rem; }
 }
 .card {
   background: var(--bg-surface);
-  border: 1px solid rgba(0, 229, 160, 0.2);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -570,8 +572,8 @@ h2 { font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.5rem; }
 textarea, .input-field {
   width: 100%;
   padding: 1rem;
-  background: rgba(0, 229, 160, 0.05);
-  border: 1px solid rgba(0, 229, 160, 0.2);
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   color: var(--text-primary);
   font-family: var(--font-body);
@@ -587,9 +589,9 @@ textarea {
 
 textarea:focus, .input-field:focus {
   outline: none;
-  background: rgba(0, 229, 160, 0.08);
+  background: #fff;
   border-color: var(--mint-primary);
-  box-shadow: var(--glow-mint);
+  box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.08);
 }
 
 textarea::placeholder, .input-field::placeholder {
@@ -614,7 +616,7 @@ textarea::placeholder, .input-field::placeholder {
 .char-count { font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: 0.5rem; }
 
 .upload-zone {
-  border: 2px dashed rgba(0, 229, 160, 0.3);
+  border: 2px dashed rgba(0, 102, 255, 0.3);
   border-radius: 12px;
   padding: 3rem;
   text-align: center;
@@ -631,20 +633,20 @@ textarea::placeholder, .input-field::placeholder {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(0, 229, 160, 0.05) 50%, transparent 100%);
+  background: linear-gradient(135deg, transparent 0%, rgba(0, 102, 255, 0.04) 50%, transparent 100%);
   animation: shimmer 3s infinite;
   pointer-events: none;
 }
 
 .upload-zone:hover {
   border-color: var(--mint-primary);
-  background: rgba(0, 229, 160, 0.08);
+  background: rgba(0, 102, 255, 0.04);
   transform: scale(1.02);
-  box-shadow: var(--glow-mint);
+  box-shadow: var(--shadow-md);
 }
 
 .upload-zone.dragover {
-  background: rgba(0, 229, 160, 0.15);
+  background: rgba(0, 102, 255, 0.08);
   border-color: var(--mint-primary);
   transform: scale(1.05);
 }
@@ -702,7 +704,7 @@ textarea::placeholder, .input-field::placeholder {
 .badge-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
 .badge {
   display: inline-block;
-  background: rgba(0, 229, 160, 0.2);
+  background: rgba(0, 102, 255, 0.1);
   color: var(--mint-primary);
   padding: 0.35rem 0.75rem;
   border-radius: 20px;
@@ -733,7 +735,7 @@ textarea::placeholder, .input-field::placeholder {
 
 /* Medicine Item */
 .medicine-item {
-  background: rgba(0, 229, 160, 0.05);
+  background: rgba(0, 102, 255, 0.04);
   border-left: 3px solid var(--mint-primary);
   border-radius: 8px;
   padding: 1.25rem;
@@ -743,9 +745,9 @@ textarea::placeholder, .input-field::placeholder {
 }
 
 .medicine-item:hover {
-  background: rgba(0, 229, 160, 0.1);
+  background: rgba(0, 102, 255, 0.08);
   transform: translateY(-4px);
-  box-shadow: var(--glow-mint);
+  box-shadow: var(--shadow-md);
 }
 
 .medicine-name {
@@ -776,12 +778,12 @@ textarea::placeholder, .input-field::placeholder {
 
 /* Instructions List */
 .inst-summary-strip {
-    background-color: #0d2218;
+    background-color: var(--primary-blue-light, rgba(0,102,255,0.06));
     border-left: 4px solid var(--accent-teal);
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
-    color: var(--accent-mint);
+    color: var(--text-primary);
 }
 .inst-summary-strip strong {
     color: var(--accent-teal);
@@ -799,7 +801,7 @@ textarea::placeholder, .input-field::placeholder {
   gap: 1rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: rgba(0, 229, 160, 0.05);
+  background: rgba(0, 102, 255, 0.03);
   border-radius: 8px;
   animation: slideInLeft 0.5s ease-out;
   transition: all 0.3s ease;
@@ -815,16 +817,16 @@ textarea::placeholder, .input-field::placeholder {
   height: 30px;
   min-width: 30px;
   background: linear-gradient(135deg, var(--mint-primary), var(--mint-dark));
-  color: #111;
+  color: #fff;
   border-radius: 50%;
   font-weight: 700;
   animation: popIn 0.4s ease-out;
 }
 
 .step-item:hover {
-  background: rgba(0, 229, 160, 0.1);
+  background: rgba(0, 102, 255, 0.06);
   padding-left: 1.5rem;
-  box-shadow: var(--glow-mint);
+  box-shadow: var(--shadow-md);
 }
 .step-item-content {
 	flex: 1;
@@ -834,7 +836,7 @@ textarea::placeholder, .input-field::placeholder {
 
 /* Collapsible Accordion (Why this combination?) */
 .accordion-header {
-  background: #16181f; /* #16181f header */
+  background: var(--bg-dark);
   border-radius: 8px;
   padding: 1rem;
   cursor: pointer;
@@ -845,10 +847,10 @@ textarea::placeholder, .input-field::placeholder {
 .accordion-body {
   display: none;
   padding: 1rem;
-  background: #0f1117; /* Dark base */
+  background: var(--bg-darker);
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  margin-top: -8px; /* Tweak to connect header and body */
+  margin-top: -8px;
   border: 1px solid var(--border-color);
   border-top: none;
 }
@@ -864,14 +866,14 @@ textarea::placeholder, .input-field::placeholder {
 	border: 1px solid;
 }
 .inst-text {
-	color: #d1d5db; /* Body text color */
+	color: var(--text-secondary);
 }
 .inst-med-name {
 	font-weight: bold;
-	color: #f3f4f6; /* Medicine names bold at #f3f4f6 */
+	color: var(--text-primary);
 }
 .inst-muted-label {
-	color: #6b7280; /* Muted labels at #6b7280 */
+	color: var(--text-muted);
 }
 
 /* Tips List */
@@ -886,7 +888,7 @@ textarea::placeholder, .input-field::placeholder {
 }
 
 .tip-item.info {
-  background: rgba(0, 229, 160, 0.08);
+  background: rgba(0, 102, 255, 0.05);
   border-left: 3px solid var(--mint-primary);
 }
 
@@ -920,8 +922,8 @@ textarea::placeholder, .input-field::placeholder {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: rgba(0, 229, 160, 0.05);
-  border: 1px solid rgba(0, 229, 160, 0.2);
+  background: var(--bg-light, rgba(0, 102, 255, 0.03));
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   margin-bottom: 1rem;
   animation: slideInLeft 0.5s ease-out;
@@ -929,9 +931,9 @@ textarea::placeholder, .input-field::placeholder {
 }
 
 .dose-row:hover {
-  background: rgba(0, 229, 160, 0.1);
+  background: rgba(0, 102, 255, 0.06);
   transform: translateY(-4px);
-  box-shadow: var(--glow-mint);
+  box-shadow: var(--shadow-md);
 }
 
 .dose-info {
@@ -1241,6 +1243,22 @@ input:checked + .slider:before {
 .bg-blur.top-left { animation-delay: 0s; }
 .bg-blur.bottom-right { animation-delay: -5s; }
 
+/* Section headers for new tracking pages */
+.section-header {
+  margin-bottom: 2rem;
+}
+.section-header .pre-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--mint-primary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+
 /* Disclaimer Banner */
 .disclaimer-banner {
   position: fixed; bottom: 0; width: 100%;
@@ -1302,8 +1320,9 @@ input:checked + .slider:before {
   .reminders-layout { grid-template-columns: 1fr; }
   .nav-links {
     position: absolute; top: 100%; left: 0; width: 100%;
-    background: var(--card-bg); flex-direction: column; gap: 0;
+    background: #ffffff; flex-direction: column; gap: 0;
     display: none; border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
   }
   .nav-links.active { display: flex; }
   .nav-link { padding: 1.5rem; text-align: center; border-bottom: 1px solid var(--border-color); border-radius: 0; }
