@@ -379,11 +379,9 @@ const tracking = {
             if (!chart) return;
 
             const max = Math.max(...data.map(d => d.adherence), 1);
-            const days = ['S','M','T','W','T','F','S','S'];
             chart.innerHTML = data.map((d, i) => {
                 const h = Math.round((d.adherence / max) * 100);
-                const date = new Date(d.date);
-                const label = date.toLocaleDateString('en', { weekday: 'short' });
+                const label = new Date(d.date).toLocaleDateString('en', { weekday: 'short' });
                 return `
                     <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
                         <div style="font-size:.75rem;font-weight:600;color:var(--primary-blue);">${d.adherence}</div>

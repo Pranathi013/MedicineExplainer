@@ -1243,7 +1243,14 @@ input:checked + .slider:before {
 .bg-blur.top-left { animation-delay: 0s; }
 .bg-blur.bottom-right { animation-delay: -5s; }
 
-/* Section headers for new tracking pages */
+/* Hero full-bleed layout — breaks out of the padded main container */
+.hero-full-bleed {
+  padding: 0;
+  max-width: 100%;
+  margin-left: -2rem;
+  margin-right: -2rem;
+  margin-top: -20px;
+}
 .section-header {
   margin-bottom: 2rem;
 }

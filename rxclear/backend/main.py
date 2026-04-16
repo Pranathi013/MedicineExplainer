@@ -391,7 +391,7 @@ async def get_weekly_stats(session_id: int):
     cursor = conn.cursor()
 
     stats = []
-    for i in range(7, -1, -1):
+    for i in range(6, -1, -1):
         date_str = (datetime.now() - timedelta(days=i)).strftime("%Y-%m-%d")
 
         cursor.execute(
